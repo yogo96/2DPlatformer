@@ -1,30 +1,30 @@
 using UnityEngine;
 
-public class EnemyMovement : MonoBehaviour
+public class EnemyMover : MonoBehaviour
 {
     [SerializeField] private Transform[] _movePoints;
     [SerializeField] private float _speed;
 
     private float _distanceToPoint = 0.1f;
     private int _currentPointIndex = 0;
-    private float _fallPosition;
+    private float _outBoundsPosition;
     private int _positionModifier = 10;
 
     private void Awake()
     {
         Spawn();
-        _fallPosition = transform.localPosition.y - _positionModifier;
+        _outBoundsPosition = transform.localPosition.y - _positionModifier;
     }
 
     private void Update()
     {
         Move();
-        CheckFall();
+        RespawnIfOutOfBounds();
     }
 
-    private void CheckFall()
+    private void RespawnIfOutOfBounds()
     {
-        if (transform.localPosition.y < _fallPosition)
+        if (transform.localPosition.y < _outBoundsPosition)
         {
             Spawn();
         }

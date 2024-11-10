@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -11,49 +12,48 @@ public class PlayerMovement : MonoBehaviour
     private bool _isJump;
     private bool _isFall;
     private bool _isRun;
-    
+
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
     }
+
     private void Update()
     {
-        Move();
-        Jump();
+            Fall();
     }
-    
+
     public bool IsJump()
     {
         return _isJump;
     }
-    
+
     public bool IsFall()
     {
         return _isFall;
     }
-    
+
     public bool IsRun()
     {
         return _isRun;
     }
-    
-    private void Move()
+
+    public void Move(Vector3 direction)
     {
-        float axisHorizontal = Input.GetAxis("Horizontal");
         Vector3 localScale = transform.localScale;
 
-        if (axisHorizontal > 0)
+        if (direction.Equals(Vector3.right))
         {
             if (localScale.x < 0)
                 transform.localScale = new Vector2(Mathf.Abs(localScale.x), localScale.y);
-            transform.Translate(Vector3.right * _runSpeed * Time.fixedDeltaTime);
+            transform.Translate(direction * _runSpeed * Time.fixedDeltaTime);
             _isRun = true;
         }
-        else if (axisHorizontal < 0)
+        else if (direction.Equals(Vector3.left))
         {
             if (localScale.x > 0)
                 transform.localScale = new Vector2(localScale.x * -1, localScale.y);
-            transform.Translate(Vector3.left * _runSpeed * Time.fixedDeltaTime);
+            transform.Translate(direction * _runSpeed * Time.fixedDeltaTime);
             _isRun = true;
         }
         else
@@ -62,31 +62,33 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void Jump()
+    public void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && _groundChecker.IsGround())
+        if (_groundChecker.IsGround())
         {
             _rigidbody.AddForce(new Vector2(0f, _jumpForce), ForceMode2D.Impulse);
             _isJump = true;
             _isRun = false;
             _isFall = false;
         }
-        else if (_groundChecker.IsGround() == false && _rigidbody.velocity.y > 0)
-        {
-            _isJump = true;
-            _isRun = false;
-            _isFall = false;
-        }
-        else if (_groundChecker.IsGround() == false && _rigidbody.velocity.y < 0)
-        {
-            _isFall = true;
-            _isRun = false;
-            _isJump = false;
-        }
-        else if (_groundChecker.IsGround())
+    }
+
+    private void Fall()
+    {
+        if (_rigidbody.velocity.y < 0)
         {
             _isJump = false;
-            _isFall = false;
+
+            if (_groundChecker.IsGround())
+            {
+                _isRun = true;
+                _isFall = false;
+            }
+            else
+            {
+                _isFall = true;
+                _isJump = false;
+            }
         }
     }
 }

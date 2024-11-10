@@ -2,21 +2,29 @@ using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(PlayerMovement))]
+[RequireComponent(typeof(PlayerInput))]
 public class Player : MonoBehaviour
 {
     [SerializeField] private Transform _spawnPoint;
     
-    private PlayerMovement _playerMovement;
+    private PlayerMovement _movement;
+    private PlayerInput _input;
     private Animator _animator;
 
     private void Awake()
     {
         _animator = GetComponent<Animator>();
-        _playerMovement = GetComponent<PlayerMovement>();
+        _movement = GetComponent<PlayerMovement>();
+        _input = GetComponent<PlayerInput>();
     }
 
     private void Update()
     {
+        _movement.Move(_input.MoveDirection);
+        
+        if (_input.TryJump)
+            _movement.Jump();
+        
         Animate();
         CheckOutOfBounds();
     }
@@ -31,9 +39,9 @@ public class Player : MonoBehaviour
     
     private void Animate()
     {
-        _animator.SetBool("isRun", _playerMovement.IsRun());
-        _animator.SetBool("isJump", _playerMovement.IsJump());
-        _animator.SetBool("isFall", _playerMovement.IsFall());
+        _animator.SetBool(PlayerAnimatorData.Params.IsRun, _movement.IsRun());
+        _animator.SetBool(PlayerAnimatorData.Params.IsJump, _movement.IsJump());
+        _animator.SetBool(PlayerAnimatorData.Params.IsFall, _movement.IsFall());
     }
 
     private void CheckOutOfBounds()
@@ -41,6 +49,7 @@ public class Player : MonoBehaviour
         if (transform.position.y < -1)
         {
             transform.position = _spawnPoint.position;
+            _animator.SetBool(PlayerAnimatorData.Params.IsFall, false);
         }
     }
 }
