@@ -9,6 +9,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private GroundChecker _groundChecker;
 
     private Rigidbody2D _rigidbody;
+    private int _rotateDegrees = 180;
+    private int _rotateZeroDegrees = 0;
     private bool _isJump;
     private bool _isFall;
     private bool _isRun;
@@ -43,31 +45,27 @@ public class PlayerMovement : MonoBehaviour
 
     public void Move(Vector3 direction)
     {
-        Vector3 localScale = transform.localScale;
-
-        if (direction.Equals(Vector3.right))
+        if (direction.Equals(Vector3.zero))
         {
-            if (localScale.x < 0)
-                transform.localScale = new Vector2(Mathf.Abs(localScale.x), localScale.y);
-            transform.Translate(direction * _runSpeed * Time.fixedDeltaTime);
-            _isRun = true;
-        }
-        else if (direction.Equals(Vector3.left))
-        {
-            if (localScale.x > 0)
-                transform.localScale = new Vector2(localScale.x * -1, localScale.y);
-            transform.Translate(direction * _runSpeed * Time.fixedDeltaTime);
-            _isRun = true;
+            _isRun = false;
         }
         else
         {
-            _isRun = false;
+            float _rotate = 0;
+            if (direction.Equals(Vector3.left))
+            {
+                _rotate = _rotateDegrees;
+            }
+
+            transform.rotation = Quaternion.Euler(_rotateZeroDegrees, _rotate, _rotateZeroDegrees);
+            transform.Translate(Vector3.right * _runSpeed * Time.deltaTime);
+            _isRun = true;
         }
     }
 
     public void Jump()
     {
-        if (_groundChecker.IsGround() && _isJump == false)
+        if (_groundChecker.IsGround && _isJump == false)
         {
             _rigidbody.AddForce(new Vector2(0f, _jumpForce), ForceMode2D.Impulse);
             _isJump = true;
@@ -91,8 +89,8 @@ public class PlayerMovement : MonoBehaviour
 
             yield return null;
         }
-        
-        if (_groundChecker.IsGround())
+
+        if (_groundChecker.IsGround)
         {
             _isRun = true;
             _isFall = false;

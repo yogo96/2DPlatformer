@@ -2,13 +2,10 @@ using UnityEngine;
 
 public class GroundChecker : MonoBehaviour
 {
+    public bool IsGround => _platformCount > 0;
+
     private int _platformCount = 0;
-
-    public bool IsGround()
-    {
-        return _platformCount > 0;
-    }
-
+    
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.TryGetComponent<Platform>(out Platform platform))

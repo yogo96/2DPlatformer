@@ -3,10 +3,12 @@ using UnityEngine;
 public class Coin : MonoBehaviour
 {
     [SerializeField] private AudioClip _audioClip;
-
-    public void PickUp()
+    [SerializeField] private int _price = 5;
+    
+    public int PickUp()
     {
         AudioSource.PlayClipAtPoint(_audioClip, transform.position);
         gameObject.SetActive(false);
+        return _price;
     }
 }

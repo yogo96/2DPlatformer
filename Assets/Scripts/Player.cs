@@ -1,21 +1,24 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(PlayerInput))]
+[RequireComponent(typeof(PlayerAnimation))]
+[RequireComponent(typeof(Wallet))]
 public class Player : MonoBehaviour
 {
     [SerializeField] private Transform _spawnPoint;
     
     private PlayerMovement _movement;
+    private PlayerAnimation _animation;
     private PlayerInput _input;
-    private Animator _animator;
+    private Wallet _wallet;
 
     private void Awake()
     {
-        _animator = GetComponent<Animator>();
+        _animation = GetComponent<PlayerAnimation>();
         _movement = GetComponent<PlayerMovement>();
         _input = GetComponent<PlayerInput>();
+        _wallet = GetComponent<Wallet>();
     }
 
     private void Update()
@@ -33,15 +36,15 @@ public class Player : MonoBehaviour
     {
         if (other.TryGetComponent<Coin>(out Coin coin))
         {
-            coin.PickUp();
+            _wallet.AddCash(coin.PickUp());
         }
     }
     
     private void Animate()
     {
-        _animator.SetBool(PlayerAnimatorData.Params.IsRun, _movement.IsRun());
-        _animator.SetBool(PlayerAnimatorData.Params.IsJump, _movement.IsJump());
-        _animator.SetBool(PlayerAnimatorData.Params.IsFall, _movement.IsFall());
+        _animation.Jump(_movement.IsJump());
+        _animation.Run(_movement.IsRun());
+        _animation.Fall(_movement.IsFall());
     }
 
     private void CheckOutOfBounds()
@@ -49,7 +52,7 @@ public class Player : MonoBehaviour
         if (transform.position.y < -1)
         {
             transform.position = _spawnPoint.position;
-            _animator.SetBool(PlayerAnimatorData.Params.IsFall, false);
+            _animation.Fall(false);
         }
     }
 }

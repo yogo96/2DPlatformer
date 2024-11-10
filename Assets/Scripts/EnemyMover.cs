@@ -2,13 +2,15 @@ using UnityEngine;
 
 public class EnemyMover : MonoBehaviour
 {
-    [SerializeField] private Transform[] _movePoints;
+    [SerializeField] private Transform[] _points;
     [SerializeField] private float _speed;
 
     private float _distanceToPoint = 0.1f;
     private int _currentPointIndex = 0;
     private float _outBoundsPosition;
     private int _positionModifier = 10;
+    private int _rotateDegrees = 180;
+    private int _rotateZeroDegrees = 0;
 
     private void Awake()
     {
@@ -32,14 +34,14 @@ public class EnemyMover : MonoBehaviour
 
     private void Spawn()
     {
-        transform.position = _movePoints[_currentPointIndex].position;
+        transform.position = _points[_currentPointIndex].position;
     }
 
     private void Move()
     {
-        Vector3 pointPosition = _movePoints[_currentPointIndex].position;
+        Vector3 pointPosition = _points[_currentPointIndex].position;
 
-        transform.position = Vector3.MoveTowards(transform.position, pointPosition, _speed * Time.fixedDeltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, pointPosition, _speed * Time.deltaTime);
 
         if ((transform.position - pointPosition).sqrMagnitude <= _distanceToPoint)
         {
@@ -50,9 +52,9 @@ public class EnemyMover : MonoBehaviour
     private void ChangePointIndex()
     {
         _currentPointIndex++;
-        transform.Rotate(0, 180, 0);
+        transform.Rotate(_rotateZeroDegrees, _rotateDegrees, _rotateZeroDegrees);
 
-        if (_currentPointIndex == _movePoints.Length)
+        if (_currentPointIndex == _points.Length)
         {
             _currentPointIndex = 0;
         }
