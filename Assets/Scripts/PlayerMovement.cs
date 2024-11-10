@@ -12,16 +12,19 @@ public class PlayerMovement : MonoBehaviour
     private bool _isJump;
     private bool _isFall;
     private bool _isRun;
+    private Coroutine _fallingCoroutine;
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
     }
 
-    private void Update()
+    private void OnDisable()
     {
-            Fall();
+        if (_fallingCoroutine != null)
+            StopCoroutine(_fallingCoroutine);
     }
+
 
     public bool IsJump()
     {
@@ -64,31 +67,37 @@ public class PlayerMovement : MonoBehaviour
 
     public void Jump()
     {
-        if (_groundChecker.IsGround())
+        if (_groundChecker.IsGround() && _isJump == false)
         {
             _rigidbody.AddForce(new Vector2(0f, _jumpForce), ForceMode2D.Impulse);
             _isJump = true;
             _isRun = false;
             _isFall = false;
+            _fallingCoroutine = StartCoroutine(Falling());
         }
     }
 
-    private void Fall()
+    private IEnumerator Falling()
     {
-        if (_rigidbody.velocity.y < 0)
+        while (_rigidbody.velocity.y >= 0)
         {
+            yield return null;
+        }
+
+        while (_rigidbody.velocity.y < 0)
+        {
+            _isFall = true;
             _isJump = false;
 
-            if (_groundChecker.IsGround())
-            {
-                _isRun = true;
-                _isFall = false;
-            }
-            else
-            {
-                _isFall = true;
-                _isJump = false;
-            }
+            yield return null;
+        }
+        
+        if (_groundChecker.IsGround())
+        {
+            _isRun = true;
+            _isFall = false;
+            _isJump = false;
+            _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, 0f);
         }
     }
 }

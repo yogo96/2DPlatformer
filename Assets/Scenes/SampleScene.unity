@@ -42513,7 +42513,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5742161891241598266, guid: 11e79abed415d4118aa231c81c47860b, type: 3}
       propertyPath: _jumpForce
-      value: 0.2
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 6009785215103797085, guid: 11e79abed415d4118aa231c81c47860b, type: 3}
       propertyPath: _spawnPoint
