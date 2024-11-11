@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerMover))]
@@ -8,11 +7,15 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField] private Transform _spawnPoint;
+    [SerializeField] private int _health = 100;
     
     private PlayerMover _mover;
     private PlayerAnimation _animation;
     private PlayerInput _input;
     private Wallet _wallet;
+    private int _outBoundPosition = -1;
+    private int _maxHealth = 100;
+    private int _minHealth = 0;
 
     private void Awake()
     {
@@ -28,6 +31,11 @@ public class Player : MonoBehaviour
 
         Animate();
         CheckOutOfBounds();
+
+        if (_health <= _minHealth)
+        {
+            Respawn();
+        }
     }
 
     private void FixedUpdate()
@@ -38,9 +46,23 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.TryGetComponent<Coin>(out Coin coin))
+        if (other.TryGetComponent<IPickable>(out IPickable pickable))
         {
-            _wallet.AddCash(coin.PickUp());
+            pickable.PickUp(this);
+        }
+    }
+    
+    public void AddCoin(int value)
+    {
+        _wallet.AddCash(value);
+    }
+
+    public void Heal(int value)
+    {
+        _health += value;
+        if (_health > _maxHealth)
+        {
+            _health = _maxHealth;
         }
     }
     
@@ -53,10 +75,16 @@ public class Player : MonoBehaviour
 
     private void CheckOutOfBounds()
     {
-        if (transform.position.y < -1)
+        if (transform.position.y < _outBoundPosition)
         {
-            transform.position = _spawnPoint.position;
             _animation.Fall(false);
+            Respawn();
         }
+    }
+
+    private void Respawn()
+    {
+        transform.position = _spawnPoint.position;
+        _health = _maxHealth;
     }
 }

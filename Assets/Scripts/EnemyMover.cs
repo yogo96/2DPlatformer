@@ -20,7 +20,7 @@ public class EnemyMover : MonoBehaviour
 
     private void Update()
     {
-        Move();
+        Move(); 
         RespawnIfOutOfBounds();
     }
 
@@ -37,20 +37,47 @@ public class EnemyMover : MonoBehaviour
         transform.position = _points[_currentPointIndex].position;
     }
 
+    // private void Move()
+    // {
+    //     Vector3 pointPosition = _points[_currentPointIndex].position;
+    //
+    //     transform.position = Vector3.MoveTowards(transform.position, pointPosition, _speed * Time.deltaTime);
+    //
+    //     if ((transform.position - pointPosition).sqrMagnitude <= _distanceToPoint)
+    //     {
+    //         ChangePointIndex();
+    //     }
+    // }
+
     private void Move()
     {
         Vector3 pointPosition = _points[_currentPointIndex].position;
+        Vector3 direction = (pointPosition - transform.position).normalized;
 
-        transform.position = Vector3.MoveTowards(transform.position, pointPosition, _speed * Time.deltaTime);
+        RaycastHit2D hit =
+            Physics2D.Raycast(transform.position, direction, 50, LayerMask.GetMask("Player"));
 
-        if ((transform.position - pointPosition).sqrMagnitude <= _distanceToPoint)
+        if (hit.collider != null && hit.transform.TryGetComponent(out Player player))
         {
-            ChangePointIndex();
+            Debug.Log("find player");
+            transform.position =
+                Vector3.MoveTowards(transform.position, hit.transform.position, _speed * Time.deltaTime);
+        }
+        else
+        {
+            Debug.Log("Move to point");
+            transform.position = Vector3.MoveTowards(transform.position, pointPosition, _speed * Time.deltaTime);
+
+            if ((transform.position - pointPosition).sqrMagnitude <= _distanceToPoint)
+            {
+                ChangePointIndex();
+            }
         }
     }
 
     private void ChangePointIndex()
     {
+        Debug.Log("ChangePointIndex");
         transform.Rotate(_rotateZeroDegrees, _rotateDegrees, _rotateZeroDegrees);
 
         _currentPointIndex = ++_currentPointIndex % _points.Length;
