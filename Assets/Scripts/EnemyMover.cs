@@ -51,12 +51,8 @@ public class EnemyMover : MonoBehaviour
 
     private void ChangePointIndex()
     {
-        _currentPointIndex++;
         transform.Rotate(_rotateZeroDegrees, _rotateDegrees, _rotateZeroDegrees);
 
-        if (_currentPointIndex == _points.Length)
-        {
-            _currentPointIndex = 0;
-        }
+        _currentPointIndex = ++_currentPointIndex % _points.Length;
     }
 }

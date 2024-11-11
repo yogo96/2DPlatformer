@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class PlayerMovement : MonoBehaviour
+public class PlayerMover : MonoBehaviour
 {
     [SerializeField] private float _runSpeed = 0.5f;
     [SerializeField] private float _jumpForce = 9f;
@@ -16,6 +16,13 @@ public class PlayerMovement : MonoBehaviour
     private bool _isRun;
     private Coroutine _fallingCoroutine;
 
+    public bool IsJump => _isJump;
+
+    public bool IsFall => _isFall;
+
+    public bool IsRun => _isRun;
+
+
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
@@ -25,22 +32,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_fallingCoroutine != null)
             StopCoroutine(_fallingCoroutine);
-    }
-
-
-    public bool IsJump()
-    {
-        return _isJump;
-    }
-
-    public bool IsFall()
-    {
-        return _isFall;
-    }
-
-    public bool IsRun()
-    {
-        return _isRun;
     }
 
     public void Move(Vector3 direction)

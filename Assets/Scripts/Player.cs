@@ -1,6 +1,7 @@
+using System;
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerMovement))]
+[RequireComponent(typeof(PlayerMover))]
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(PlayerAnimation))]
 [RequireComponent(typeof(Wallet))]
@@ -8,7 +9,7 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private Transform _spawnPoint;
     
-    private PlayerMovement _movement;
+    private PlayerMover _mover;
     private PlayerAnimation _animation;
     private PlayerInput _input;
     private Wallet _wallet;
@@ -16,20 +17,23 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         _animation = GetComponent<PlayerAnimation>();
-        _movement = GetComponent<PlayerMovement>();
+        _mover = GetComponent<PlayerMover>();
         _input = GetComponent<PlayerInput>();
         _wallet = GetComponent<Wallet>();
     }
 
     private void Update()
     {
-        _movement.Move(_input.MoveDirection);
-        
-        if (_input.TryJump)
-            _movement.Jump();
-        
+        _mover.Move(_input.MoveDirection);
+
         Animate();
         CheckOutOfBounds();
+    }
+
+    private void FixedUpdate()
+    {
+        if (_input.TryJump)
+            _mover.Jump();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -42,9 +46,9 @@ public class Player : MonoBehaviour
     
     private void Animate()
     {
-        _animation.Jump(_movement.IsJump());
-        _animation.Run(_movement.IsRun());
-        _animation.Fall(_movement.IsFall());
+        _animation.Jump(_mover.IsJump);
+        _animation.Run(_mover.IsRun);
+        _animation.Fall(_mover.IsFall);
     }
 
     private void CheckOutOfBounds()
