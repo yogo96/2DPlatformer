@@ -2,31 +2,61 @@ using UnityEngine;
 
 public class EnemyMover : MonoBehaviour
 {
+    private const string PLAYER_LEVEL = "Player";
+
     [SerializeField] private Transform[] _points;
     [SerializeField] private float _speed;
 
     private float _distanceToPoint = 0.1f;
     private int _currentPointIndex = 0;
     private float _outBoundsPosition;
-    private int _positionModifier = 10;
+    private int _positionModifier = 1;
     private int _rotateDegrees = 180;
     private int _rotateZeroDegrees = 0;
+    private int _followDistance = 12;
+    private Vector3 _movePosition;
+    private int _raycastLayer;
 
     private void Awake()
     {
+        _raycastLayer = LayerMask.GetMask(PLAYER_LEVEL);
         Spawn();
-        _outBoundsPosition = transform.localPosition.y - _positionModifier;
+        _outBoundsPosition = transform.position.y - _positionModifier;
     }
-
-    private void Update()
+    
+    private void FixedUpdate()
     {
-        Move(); 
-        RespawnIfOutOfBounds();
+        RaycastHit2D hit =
+            Physics2D.Raycast(transform.position, transform.right, _followDistance, _raycastLayer);
+
+        if (hit.collider != null && hit.transform.TryGetComponent(out Player player))
+        {
+            _movePosition = player.transform.position;
+        }
+        else
+        {
+            _movePosition = _points[_currentPointIndex].position;
+        }
     }
 
+    public void Move()
+    {
+        RespawnIfOutOfBounds();
+
+        RotateTo(_movePosition);
+
+        if ((transform.position - _movePosition).sqrMagnitude <= _distanceToPoint)
+        {
+            ChangePointIndex();
+        }
+
+        transform.position =
+            Vector3.MoveTowards(transform.position, _movePosition, _speed * Time.deltaTime);
+    }
+    
     private void RespawnIfOutOfBounds()
     {
-        if (transform.localPosition.y < _outBoundsPosition)
+        if (transform.position.y <= _outBoundsPosition)
         {
             Spawn();
         }
@@ -37,49 +67,23 @@ public class EnemyMover : MonoBehaviour
         transform.position = _points[_currentPointIndex].position;
     }
 
-    // private void Move()
-    // {
-    //     Vector3 pointPosition = _points[_currentPointIndex].position;
-    //
-    //     transform.position = Vector3.MoveTowards(transform.position, pointPosition, _speed * Time.deltaTime);
-    //
-    //     if ((transform.position - pointPosition).sqrMagnitude <= _distanceToPoint)
-    //     {
-    //         ChangePointIndex();
-    //     }
-    // }
-
-    private void Move()
+    private void RotateTo(Vector3 position)
     {
-        Vector3 pointPosition = _points[_currentPointIndex].position;
-        Vector3 direction = (pointPosition - transform.position).normalized;
+        Vector3 direction = (position - transform.position).normalized;
 
-        RaycastHit2D hit =
-            Physics2D.Raycast(transform.position, direction, 50, LayerMask.GetMask("Player"));
+        if (direction.x == 0)
+            return;
 
-        if (hit.collider != null && hit.transform.TryGetComponent(out Player player))
-        {
-            Debug.Log("find player");
-            transform.position =
-                Vector3.MoveTowards(transform.position, hit.transform.position, _speed * Time.deltaTime);
-        }
-        else
-        {
-            Debug.Log("Move to point");
-            transform.position = Vector3.MoveTowards(transform.position, pointPosition, _speed * Time.deltaTime);
+        int rotateDegrees = _rotateDegrees;
+        if (direction.x > 0)
+            rotateDegrees = _rotateZeroDegrees;
 
-            if ((transform.position - pointPosition).sqrMagnitude <= _distanceToPoint)
-            {
-                ChangePointIndex();
-            }
-        }
+        transform.rotation = Quaternion.Euler(_rotateZeroDegrees, rotateDegrees, _rotateZeroDegrees);
     }
 
     private void ChangePointIndex()
     {
-        Debug.Log("ChangePointIndex");
-        transform.Rotate(_rotateZeroDegrees, _rotateDegrees, _rotateZeroDegrees);
-
         _currentPointIndex = ++_currentPointIndex % _points.Length;
+        _movePosition = _points[_currentPointIndex].position;
     }
 }
