@@ -1,12 +1,14 @@
 using System.Collections;
 using UnityEngine;
 
-public class Combat<T> : MonoBehaviour where T : MonoBehaviour
+public abstract class Combat<T> : MonoBehaviour where T : MonoBehaviour
 {
-    [SerializeField] private int _attackDamage;
+    [SerializeField] protected int _attackDamage;
+
+    protected T _target;
+    protected Health _targetHealth;
 
     private bool _isAttack;
-    private Health _targetHealth;
     private Coroutine _attackingCoroutine;
     private WaitForSeconds _attackDelay = new WaitForSeconds(0.5f);
 
@@ -16,7 +18,7 @@ public class Combat<T> : MonoBehaviour where T : MonoBehaviour
         {
             if (attackTarget.TryGetComponent<Health>(out _targetHealth))
             {
-                Debug.Log(attackTarget.name);
+                _target = attackTarget;
                 _isAttack = true;
                 _attackingCoroutine = StartCoroutine(Attacking());
             }
@@ -37,11 +39,13 @@ public class Combat<T> : MonoBehaviour where T : MonoBehaviour
             StopCoroutine(_attackingCoroutine);
     }
 
+    protected abstract void AttackTarget();
+    
     private IEnumerator Attacking()
     {
         while (_isAttack)
         {
-            _targetHealth.TakeDamage(_attackDamage);
+            AttackTarget();
             yield return _attackDelay;
         }
     }

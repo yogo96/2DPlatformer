@@ -6,7 +6,7 @@ public class PlayerInput : MonoBehaviour
     private const KeyCode JumpButton = KeyCode.Space;
     
     public Vector3 MoveDirection { get; private set; }
-    public bool TryJump { get; private set; }
+    public bool Jump { get; private set; }
 
     private void Update()
     {
@@ -27,11 +27,11 @@ public class PlayerInput : MonoBehaviour
 
         if (Input.GetKeyDown(JumpButton))
         {
-            TryJump = true;
+            Jump = true;
         }
         else if (Input.GetKeyUp(JumpButton))
         {
-            TryJump = false;
+            Jump = false;
         }
     }
 }

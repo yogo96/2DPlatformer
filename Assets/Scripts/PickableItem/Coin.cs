@@ -1,14 +1,14 @@
 using UnityEngine;
 
-public class Coin : MonoBehaviour, IPickable
+public class Coin : MonoBehaviour
 {
     [SerializeField] private AudioClip _audioClip;
     [SerializeField] private int _price = 5;
     
-    public void PickUp(Player player)
+    public int PickUp()
     {
         AudioSource.PlayClipAtPoint(_audioClip, transform.position);
         gameObject.SetActive(false);
-        player.AddCoin(_price);
+        return _price;
     }
 }

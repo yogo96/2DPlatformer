@@ -41,34 +41,29 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_input.TryJump)
+        if (_input.Jump)
             _mover.Jump();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.TryGetComponent<IPickable>(out IPickable pickable))
+        if (other.TryGetComponent(out Coin coin))
         {
-            pickable.PickUp(this);
+            _wallet.AddCash(coin.PickUp());
+        }
+        if (other.TryGetComponent(out FirstAidKit firstAidKit))
+        {
+            if (firstAidKit.TryPickUp(out  int value))
+                _health.AddValue(value);
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D other)
+    public void TakeDamage(int value)
     {
-        if (other.collider.TryGetComponent<EnemyMover>(out _))
-            Debug.Log("collision");
+        _animation.Hit();
+        _health.TakeDamage(value);
     }
 
-    public void AddCoin(int value)
-    {
-        _wallet.AddCash(value);
-    }
-
-    public void Heal(int value)
-    {
-        _health.AddValue(value);
-    }
-    
     private void Animate()
     {
         _animation.Jump(_mover.IsJump);

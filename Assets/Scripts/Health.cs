@@ -4,6 +4,8 @@ public class Health : MonoBehaviour
 {
    [SerializeField] private int _value;
    [SerializeField] private int _maxValue = 100;
+   
+   private int _minValue = 0;
 
    private void Awake()
    {
@@ -17,14 +19,18 @@ public class Health : MonoBehaviour
 
    public void AddValue(int count)
    {
-      _value += count;
-      if (_value > _maxValue)
-         _value = _maxValue;
+      if (count <= _minValue)
+         return;
+
+      _value = Mathf.Clamp(_value + count, _minValue, _maxValue);
    }
 
    public void TakeDamage(int value)
    {
-      _value -= value;
+      if (value <= _minValue)
+         return;
+      
+      _value = Mathf.Clamp(_value - value, _minValue, _maxValue);
    }
 
    public void Reset()

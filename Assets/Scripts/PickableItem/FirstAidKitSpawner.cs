@@ -33,7 +33,7 @@ public class FirstAidKitSpawner : MonoBehaviour
     private IEnumerator KitRespawning()
     {
         yield return _respawnTime;
-        _currentKit.gameObject.SetActive(true);
+        _currentKit.Reset();
         _isRespawn = false;
     }
 }

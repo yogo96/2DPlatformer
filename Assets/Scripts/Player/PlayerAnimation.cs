@@ -12,16 +12,21 @@ public class PlayerAnimation : MonoBehaviour
 
     public void Jump(bool isJump)
     {
-        _animator.SetBool(PlayerAnimatorData.Params.IsJump, isJump);
+        _animator.SetBool(AnimatorData.Params.IsJump, isJump);
     }
 
     public void Fall(bool isFall)
     {
-        _animator.SetBool(PlayerAnimatorData.Params.IsFall, isFall);
+        _animator.SetBool(AnimatorData.Params.IsFall, isFall);
     }
 
     public void Run(bool isRun)
     {
-        _animator.SetBool(PlayerAnimatorData.Params.IsRun, isRun);
+        _animator.SetBool(AnimatorData.Params.IsRun, isRun);
+    }
+
+    public void Hit()
+    {
+        _animator.SetTrigger(AnimatorData.Params.IsHit);
     }
 }
