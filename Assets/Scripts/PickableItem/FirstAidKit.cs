@@ -1,26 +1,12 @@
 using UnityEngine;
 
-public class FirstAidKit : MonoBehaviour
+public class FirstAidKit : PickableItem
 {
     [SerializeField] private int _restoreValue = 25;
 
-    private bool _isPicked;
-    
-    public bool TryPickUp(out int value)
+    public override int PickUp()
     {
-        value = _restoreValue;
-        
-        if (_isPicked)
-            return false;
-
-        _isPicked = true;
         gameObject.SetActive(false);
-        return _isPicked;
-    }
-
-    public void Reset()
-    {
-        _isPicked = false;
-        gameObject.SetActive(true);
+        return _restoreValue;
     }
 }

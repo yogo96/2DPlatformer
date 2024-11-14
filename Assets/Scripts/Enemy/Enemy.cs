@@ -21,7 +21,7 @@ public class Enemy : MonoBehaviour
     {
         _mover.Move();
 
-        if (_health.GetValue() <= _minHealth)
+        if (_health.Value <= _minHealth)
         {
             gameObject.SetActive(false);
         }

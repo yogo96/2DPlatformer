@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemyMover : MonoBehaviour
 {
-    private const string PLAYER_LEVEL = "Player";
+    private const string PlayerLayerName = "Player";
 
     [SerializeField] private Transform[] _points;
     [SerializeField] private float _speed;
@@ -19,7 +19,7 @@ public class EnemyMover : MonoBehaviour
 
     private void Awake()
     {
-        _raycastLayer = LayerMask.GetMask(PLAYER_LEVEL);
+        _raycastLayer = LayerMask.GetMask(PlayerLayerName);
         Spawn();
         _outBoundsPosition = transform.position.y - _positionModifier;
     }
@@ -75,6 +75,7 @@ public class EnemyMover : MonoBehaviour
             return;
 
         int rotateDegrees = _rotateDegrees;
+        
         if (direction.x > 0)
             rotateDegrees = _rotateZeroDegrees;
 

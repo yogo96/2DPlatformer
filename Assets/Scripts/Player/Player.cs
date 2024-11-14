@@ -16,6 +16,8 @@ public class Player : MonoBehaviour
     private Wallet _wallet;
     private int _outBoundPosition = -1;
     private int _minHealth = 0;
+    private float _pickUpCooldown = 1.0f;
+    private float _lastPickUpTime = -1.0f;
 
     private void Awake()
     {
@@ -33,7 +35,7 @@ public class Player : MonoBehaviour
         Animate();
         CheckOutOfBounds();
 
-        if (_health.GetValue() <= _minHealth)
+        if (_health.Value <= _minHealth)
         {
             Respawn();
         }
@@ -47,14 +49,15 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.TryGetComponent(out Coin coin))
+        if (other.TryGetComponent(out PickableItem pickableItem))
         {
-            _wallet.AddCash(coin.PickUp());
-        }
-        if (other.TryGetComponent(out FirstAidKit firstAidKit))
-        {
-            if (firstAidKit.TryPickUp(out  int value))
-                _health.AddValue(value);
+            if (pickableItem is Coin)
+                _wallet.AddCash(pickableItem.PickUp());
+            else if (pickableItem is FirstAidKit && Time.time - _lastPickUpTime > _pickUpCooldown)
+            {
+                _health.AddValue(pickableItem.PickUp());
+                _lastPickUpTime = Time.time;
+            }
         }
     }
 

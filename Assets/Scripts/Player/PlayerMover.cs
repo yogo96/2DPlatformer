@@ -42,13 +42,14 @@ public class PlayerMover : MonoBehaviour
         }
         else
         {
-            float _rotate = 0;
+            float rotateDegrees = 0;
+            
             if (direction.Equals(Vector3.left))
             {
-                _rotate = _rotateDegrees;
+                rotateDegrees = _rotateDegrees;
             }
 
-            transform.rotation = Quaternion.Euler(_rotateZeroDegrees, _rotate, _rotateZeroDegrees);
+            transform.rotation = Quaternion.Euler(_rotateZeroDegrees, rotateDegrees, _rotateZeroDegrees);
             transform.Translate(Vector3.right * _runSpeed * Time.deltaTime);
             _isRun = true;
         }

@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
-   [SerializeField] private int _value;
+   [field: SerializeField] public int Value { get; private set; }
+   
    [SerializeField] private int _maxValue = 100;
    
    private int _minValue = 0;
@@ -12,17 +13,12 @@ public class Health : MonoBehaviour
       Reset();
    }
 
-   public int GetValue()
-   {
-      return _value;
-   }
-
    public void AddValue(int count)
    {
       if (count <= _minValue)
          return;
 
-      _value = Mathf.Clamp(_value + count, _minValue, _maxValue);
+      Value = Mathf.Clamp(Value + count, _minValue, _maxValue);
    }
 
    public void TakeDamage(int value)
@@ -30,11 +26,11 @@ public class Health : MonoBehaviour
       if (value <= _minValue)
          return;
       
-      _value = Mathf.Clamp(_value - value, _minValue, _maxValue);
+      Value = Mathf.Clamp(Value - value, _minValue, _maxValue);
    }
 
    public void Reset()
    {
-      _value = _maxValue;
+      Value = _maxValue;
    }
 }
