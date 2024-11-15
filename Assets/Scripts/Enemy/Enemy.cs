@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(EnemyMover))]
@@ -9,7 +8,6 @@ public class Enemy : MonoBehaviour, IDamageable, IBoundsHandler
     private EnemyMover _mover;
     private Health _health;
     private EnemyAnimation _animator;
-    private int _minHealth = 0;
     
     private void Awake()
     {

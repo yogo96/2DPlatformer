@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerMover))]
@@ -15,8 +14,6 @@ public class Player : MonoBehaviour, IDamageable, IBoundsHandler
     private PlayerAnimation _animation;
     private PlayerInput _input;
     private Wallet _wallet;
-    private int _outBoundPosition = -1;
-    private int _minHealth = 0;
     private float _pickUpCooldown = 1.0f;
     private float _lastPickUpTime = -1.0f;
 
