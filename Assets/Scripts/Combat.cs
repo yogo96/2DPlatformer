@@ -1,27 +1,23 @@
 using System.Collections;
 using UnityEngine;
 
-public abstract class Combat<T> : MonoBehaviour where T : MonoBehaviour
+public abstract class Combat<T> : MonoBehaviour where T : MonoBehaviour, IDamageable
 {
     [SerializeField] protected int _attackDamage;
 
-    protected T _target;
-    protected Health _targetHealth;
-
+    private T _target;
+    private Health _targetHealth;
     private bool _isAttack;
     private Coroutine _attackingCoroutine;
     private WaitForSeconds _attackDelay = new WaitForSeconds(0.5f);
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.TryGetComponent(out T attackTarget))
+        if (other.TryGetComponent(out T target))
         {
-            if (attackTarget.TryGetComponent<Health>(out _targetHealth))
-            {
-                _target = attackTarget;
-                _isAttack = true;
-                _attackingCoroutine = StartCoroutine(Attacking());
-            }
+            _target = target;
+            _isAttack = true;
+            _attackingCoroutine = StartCoroutine(Attacking());
         }
     }
 
@@ -39,13 +35,11 @@ public abstract class Combat<T> : MonoBehaviour where T : MonoBehaviour
             StopCoroutine(_attackingCoroutine);
     }
 
-    protected abstract void AttackTarget();
-    
     private IEnumerator Attacking()
     {
         while (_isAttack)
         {
-            AttackTarget();
+            _target.TakeDamage(_attackDamage);
             yield return _attackDelay;
         }
     }

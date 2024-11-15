@@ -1,9 +1,8 @@
 using UnityEngine;
 
+[RequireComponent(typeof(PlayerDetector))]
 public class EnemyMover : MonoBehaviour
 {
-    private const string PlayerLayerName = "Player";
-
     [SerializeField] private Transform[] _points;
     [SerializeField] private float _speed;
 
@@ -13,25 +12,21 @@ public class EnemyMover : MonoBehaviour
     private int _positionModifier = 1;
     private int _rotateDegrees = 180;
     private int _rotateZeroDegrees = 0;
-    private int _followDistance = 12;
     private Vector3 _movePosition;
-    private int _raycastLayer;
+    private PlayerDetector _playerDetector;
 
     private void Awake()
     {
-        _raycastLayer = LayerMask.GetMask(PlayerLayerName);
-        Spawn();
+        _playerDetector = GetComponent<PlayerDetector>();
+        ResetPosition();
         _outBoundsPosition = transform.position.y - _positionModifier;
     }
-    
+
     private void FixedUpdate()
     {
-        RaycastHit2D hit =
-            Physics2D.Raycast(transform.position, transform.right, _followDistance, _raycastLayer);
-
-        if (hit.collider != null && hit.transform.TryGetComponent(out Player player))
+        if (_playerDetector.IsFindTarget)
         {
-            _movePosition = player.transform.position;
+            _movePosition = _playerDetector.Target.transform.position;
         }
         else
         {
@@ -41,8 +36,6 @@ public class EnemyMover : MonoBehaviour
 
     public void Move()
     {
-        RespawnIfOutOfBounds();
-
         RotateTo(_movePosition);
 
         if ((transform.position - _movePosition).sqrMagnitude <= _distanceToPoint)
@@ -53,16 +46,8 @@ public class EnemyMover : MonoBehaviour
         transform.position =
             Vector3.MoveTowards(transform.position, _movePosition, _speed * Time.deltaTime);
     }
-    
-    private void RespawnIfOutOfBounds()
-    {
-        if (transform.position.y <= _outBoundsPosition)
-        {
-            Spawn();
-        }
-    }
 
-    private void Spawn()
+    public void ResetPosition()
     {
         transform.position = _points[_currentPointIndex].position;
     }
@@ -75,7 +60,7 @@ public class EnemyMover : MonoBehaviour
             return;
 
         int rotateDegrees = _rotateDegrees;
-        
+
         if (direction.x > 0)
             rotateDegrees = _rotateZeroDegrees;
 

@@ -1,8 +1,10 @@
+using System;
 using UnityEngine;
 
 public class Health : MonoBehaviour
 {
    [field: SerializeField] public int Value { get; private set; }
+   public Action OnHealthDepleted;
    
    [SerializeField] private int _maxValue = 100;
    
@@ -27,6 +29,11 @@ public class Health : MonoBehaviour
          return;
       
       Value = Mathf.Clamp(Value - value, _minValue, _maxValue);
+
+      if (Value == 0)
+      {
+         OnHealthDepleted?.Invoke();
+      }
    }
 
    public void Reset()

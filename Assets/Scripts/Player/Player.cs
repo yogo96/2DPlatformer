@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerMover))]
@@ -5,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerAnimation))]
 [RequireComponent(typeof(Wallet))]
 [RequireComponent(typeof(Health))]
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IDamageable, IBoundsHandler
 {
     [SerializeField] private Transform _spawnPoint;
 
@@ -26,6 +27,8 @@ public class Player : MonoBehaviour
         _input = GetComponent<PlayerInput>();
         _wallet = GetComponent<Wallet>();
         _health = GetComponent<Health>();
+
+        _health.OnHealthDepleted += Respawn;
     }
 
     private void Update()
@@ -33,12 +36,6 @@ public class Player : MonoBehaviour
         _mover.Move(_input.MoveDirection);
 
         Animate();
-        CheckOutOfBounds();
-
-        if (_health.Value <= _minHealth)
-        {
-            Respawn();
-        }
     }
 
     private void FixedUpdate()
@@ -61,10 +58,21 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        _health.OnHealthDepleted -= Respawn;
+    }
+
     public void TakeDamage(int value)
     {
         _animation.Hit();
         _health.TakeDamage(value);
+    }
+    
+    public void HandleOutOfBounds()
+    {
+        _animation.Fall(false);
+        Respawn();
     }
 
     private void Animate()
@@ -72,15 +80,6 @@ public class Player : MonoBehaviour
         _animation.Jump(_mover.IsJump);
         _animation.Run(_mover.IsRun);
         _animation.Fall(_mover.IsFall);
-    }
-
-    private void CheckOutOfBounds()
-    {
-        if (transform.position.y < _outBoundPosition)
-        {
-            _animation.Fall(false);
-            Respawn();
-        }
     }
 
     private void Respawn()
