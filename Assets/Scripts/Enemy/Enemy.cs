@@ -8,14 +8,14 @@ public class Enemy : MonoBehaviour, IDamageable, IBoundsHandler
     private EnemyMover _mover;
     private Health _health;
     private EnemyAnimation _animator;
-    
+
     private void Awake()
     {
         _mover = GetComponent<EnemyMover>();
         _health = GetComponent<Health>();
         _animator = GetComponent<EnemyAnimation>();
 
-        _health.OnHealthDepleted += HandleHealthDepleted;
+        _health.Depleted += HandleHealthDepleted;
     }
 
     private void Update()
@@ -25,7 +25,7 @@ public class Enemy : MonoBehaviour, IDamageable, IBoundsHandler
 
     private void OnDisable()
     {
-        _health.OnHealthDepleted -= HandleHealthDepleted;
+        _health.Depleted -= HandleHealthDepleted;
     }
 
     public void TakeDamage(int value)
@@ -38,7 +38,7 @@ public class Enemy : MonoBehaviour, IDamageable, IBoundsHandler
     {
         _mover.ResetPosition();
     }
-    
+
     private void HandleHealthDepleted()
     {
         gameObject.SetActive(false);

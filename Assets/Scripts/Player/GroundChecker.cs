@@ -17,12 +17,11 @@ public class GroundChecker : MonoBehaviour
         if (other.gameObject.TryGetComponent<Platform>(out _))
         {
             _platformCount--;
-            
+
             if (_platformCount < 0)
             {
                 _platformCount = 0;
             }
         }
     }
-
 }

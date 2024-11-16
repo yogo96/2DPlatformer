@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
 {
-    private const string DirectionAxis = "Horizontal"; 
+    private const string DirectionAxis = "Horizontal";
     private const KeyCode JumpButton = KeyCode.Space;
-    
+
     public Vector3 MoveDirection { get; private set; }
     public bool Jump { get; private set; }
 

@@ -5,10 +5,10 @@ using UnityEngine;
 public class PlayerDetector : MonoBehaviour
 {
     private const string PlayerLayerName = "Player";
-    
+
     public bool IsFindTarget { get; private set; }
     public Player Target { get; private set; }
-    
+
     private Coroutine _targetFindingCoroutine;
     private WaitForSeconds _findDelay = new WaitForSeconds(0.1f);
     private int _findDistance = 12;
@@ -22,7 +22,7 @@ public class PlayerDetector : MonoBehaviour
 
     public void OnDisable()
     {
-        if(_targetFindingCoroutine != null)
+        if (_targetFindingCoroutine != null)
             StopCoroutine(_targetFindingCoroutine);
     }
 

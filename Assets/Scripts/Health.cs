@@ -3,41 +3,41 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
-   [field: SerializeField] public int Value { get; private set; }
-   public Action OnHealthDepleted;
-   
-   [SerializeField] private int _maxValue = 100;
-   
-   private int _minValue = 0;
+    public Action Depleted;
+    [field: SerializeField] public int Value { get; private set; }
 
-   private void Awake()
-   {
-      Reset();
-   }
+    [SerializeField] private int _maxValue = 100;
 
-   public void AddValue(int count)
-   {
-      if (count <= _minValue)
-         return;
+    private int _minValue = 0;
 
-      Value = Mathf.Clamp(Value + count, _minValue, _maxValue);
-   }
+    private void Awake()
+    {
+        Reset();
+    }
 
-   public void TakeDamage(int value)
-   {
-      if (value <= _minValue)
-         return;
-      
-      Value = Mathf.Clamp(Value - value, _minValue, _maxValue);
+    public void AddValue(int count)
+    {
+        if (count <= _minValue)
+            return;
 
-      if (Value == 0)
-      {
-         OnHealthDepleted?.Invoke();
-      }
-   }
+        Value = Mathf.Clamp(Value + count, _minValue, _maxValue);
+    }
 
-   public void Reset()
-   {
-      Value = _maxValue;
-   }
+    public void TakeDamage(int value)
+    {
+        if (value <= _minValue)
+            return;
+
+        Value = Mathf.Clamp(Value - value, _minValue, _maxValue);
+
+        if (Value == 0)
+        {
+            Depleted?.Invoke();
+        }
+    }
+
+    public void Reset()
+    {
+        Value = _maxValue;
+    }
 }

@@ -25,7 +25,7 @@ public class Player : MonoBehaviour, IDamageable, IBoundsHandler
         _wallet = GetComponent<Wallet>();
         _health = GetComponent<Health>();
 
-        _health.OnHealthDepleted += Respawn;
+        _health.Depleted += Respawn;
     }
 
     private void Update()
@@ -57,7 +57,7 @@ public class Player : MonoBehaviour, IDamageable, IBoundsHandler
 
     private void OnDisable()
     {
-        _health.OnHealthDepleted -= Respawn;
+        _health.Depleted -= Respawn;
     }
 
     public void TakeDamage(int value)
@@ -65,7 +65,7 @@ public class Player : MonoBehaviour, IDamageable, IBoundsHandler
         _animation.Hit();
         _health.TakeDamage(value);
     }
-    
+
     public void HandleOutOfBounds()
     {
         _animation.Fall(false);

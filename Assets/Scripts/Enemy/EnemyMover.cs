@@ -8,8 +8,6 @@ public class EnemyMover : MonoBehaviour
 
     private float _distanceToPoint = 0.1f;
     private int _currentPointIndex = 0;
-    private float _outBoundsPosition;
-    private int _positionModifier = 1;
     private int _rotateDegrees = 180;
     private int _rotateZeroDegrees = 0;
     private Vector3 _movePosition;
@@ -19,7 +17,6 @@ public class EnemyMover : MonoBehaviour
     {
         _playerDetector = GetComponent<PlayerDetector>();
         ResetPosition();
-        _outBoundsPosition = transform.position.y - _positionModifier;
     }
 
     private void FixedUpdate()

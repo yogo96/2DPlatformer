@@ -1,15 +1,15 @@
 using UnityEngine;
 
-public class BoundsChecker : MonoBehaviour
+public class BoundsChecker<T> : MonoBehaviour where T : MonoBehaviour, IBoundsHandler
 {
-    [SerializeField] private float _outPosition = 1; 
-    [SerializeField] private Transform _targetTransform;
+    [SerializeField] private float _outPosition = 1;
+    [SerializeField] private T _target;
 
-    private IBoundsHandler _target;
+    private Transform _targetTransform;
 
     private void Awake()
     {
-        _target = _targetTransform.GetComponent<IBoundsHandler>();
+        _targetTransform = _target.transform;
     }
 
     private void Update()

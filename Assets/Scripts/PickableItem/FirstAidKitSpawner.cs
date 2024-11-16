@@ -4,12 +4,12 @@ using UnityEngine;
 public class FirstAidKitSpawner : MonoBehaviour
 {
     [SerializeField] private FirstAidKit _prefab;
-    
+
     private Coroutine _respawningCoroutine;
     private WaitForSeconds _respawnTime = new WaitForSeconds(5);
     private FirstAidKit _currentKit;
     private bool _isRespawn;
-    
+
     private void Awake()
     {
         _currentKit = Instantiate(_prefab, transform.position, Quaternion.identity);
